@@ -35,9 +35,14 @@ PLEASE MAKE FREQUENT COMMITS AS YOU FILL OUT THIS FILE.
 - The test is designed to check for the existence of a valid folder with both options.I also need to add more tests for other invalid arguments and defaults.
 
 ## TruffulaPrinter.java / TruffulaPrinterTest.java
+- I think TruffulaPrinter uses Options and ColorPrinter to print the directory tree.
+
+ - In Wave 4 there should be a recursive helper method, the printing of three spaces for each level of folders, and a slash after all folders printed. I have to use out.println() and java.io.
+
+- The test also checks colors, hidden files, and sorting.However, I want to simplify the tests for Wave 4 because these features are implemented in the later waves of the project.
+
 
 ## AlphabeticalFileSorter.java
-
 
 
 Wave 0: Understand..... 
