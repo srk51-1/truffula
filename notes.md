@@ -5,11 +5,11 @@ PLEASE MAKE FREQUENT COMMITS AS YOU FILL OUT THIS FILE.
 
 ## App.java
 
--I gather that the program starts its execution in the App class in its main method, where the arguments specified in the command line are processed. 
+- I gather that the program starts its execution in the App class in its main method, where the arguments specified in the command line are processed. 
 
--Thus, I need to instantiate TruffulaOptions using these arguments, instantiate TruffulaPrinter with the options, and then invoke its printTree() function. 
+- Thus, I need to instantiate TruffulaOptions using these arguments, instantiate TruffulaPrinter with the options, and then invoke its printTree() function. 
 
--This ensures that the configuration is linked to the printer. At the moment, the main method is void, and I will fill this in later in Wave 3 of my project.
+- This ensures that the configuration is linked to the printer. At the moment, the main method is void, and I will fill this in later in Wave 3 of my project.
 ## ConsoleColor.java
 
 - I comprehend that ConsoleColor holds the selection of colors applied to the printing process. This is a type of enum, which indicates that this type of variable has a limited amount of possible values.
@@ -19,6 +19,12 @@ PLEASE MAKE FREQUENT COMMITS AS YOU FILL OUT THIS FILE.
 - Methods getCode() and toString() return the code values mentioned above. The program is already implemented, therefore, I will not change anything in it myself.
 
 ## ColorPrinter.java / ColorPrinterTest.java
+
+- I believe ColorPrinter shows messages in the color you chose.White is the default, unless otherwise specified.
+
+- I need to implement print(String message, boolean reset)It should print the color code and message, then only add RESET if reset is true.
+
+- The test captures the output and looks for red text, a newline and RESET.I will try other colors and reset options also.
 
 ## TruffulaOptions.java / TruffulaOptionsTest.java
 
