@@ -28,6 +28,12 @@ PLEASE MAKE FREQUENT COMMITS AS YOU FILL OUT THIS FILE.
 
 ## TruffulaOptions.java / TruffulaOptionsTest.java
 
+- My understanding of the functionality of TruffulaOptions is that it saves the folder path and settings. The constructor needs to get the details and the path has to be passed last.
+
+- Using the -h will include hidden files and -nc will turn off colors. I want to make sure the path is a valid existing folder.
+
+- The test is designed to check for the existence of a valid folder with both options.I also need to add more tests for other invalid arguments and defaults.
+
 ## TruffulaPrinter.java / TruffulaPrinterTest.java
 
 ## AlphabeticalFileSorter.java
