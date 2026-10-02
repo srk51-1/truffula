@@ -44,6 +44,12 @@ PLEASE MAKE FREQUENT COMMITS AS YOU FILL OUT THIS FILE.
 
 ## AlphabeticalFileSorter.java
 
+- This class sorts files alphabetically by name, ignoring uppercase and lowercase differences.
+
+- It uses Arrays.sort() and returns the same sorted array.
+
+- the code is complete, so I do not need to change it.
+
 
 Wave 0: Understand..... 
 
