@@ -12,6 +12,12 @@ PLEASE MAKE FREQUENT COMMITS AS YOU FILL OUT THIS FILE.
 -This ensures that the configuration is linked to the printer. At the moment, the main method is void, and I will fill this in later in Wave 3 of my project.
 ## ConsoleColor.java
 
+- I comprehend that ConsoleColor holds the selection of colors applied to the printing process. This is a type of enum, which indicates that this type of variable has a limited amount of possible values.
+
+- Every color contains its own unique code through which you can adjust the color of your text in the terminal window. RESET code restores the text color to its original form.
+
+- Methods getCode() and toString() return the code values mentioned above. The program is already implemented, therefore, I will not change anything in it myself.
+
 ## ColorPrinter.java / ColorPrinterTest.java
 
 ## TruffulaOptions.java / TruffulaOptionsTest.java
