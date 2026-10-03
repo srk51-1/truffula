@@ -130,9 +130,14 @@ private void printFolder(File file, String spaces) {
   out.println(spaces + name);
 
   File[] children = file.listFiles();
+  
   if (children == null) {
     return;
   }
+  
+  // Sort names
+  AlphabeticalFileSorter.sort(children);
+  
 
   // Visit next level
   for (File child : children) {
