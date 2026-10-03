@@ -1,5 +1,6 @@
 import java.io.PrintStream;
 import java.util.List;
+import java.io.File;
 
 /**
  * TruffulaPrinter is responsible for printing a directory tree structure
@@ -111,8 +112,33 @@ public class TruffulaPrinter {
     // - For Wave 6: Use AlphabeticalFileSorter
     // DO NOT USE SYSTEM.OUT.PRINTLN
     // USE out.println instead (will use your ColorPrinter)
-
+    
     out.println("printTree was called!");
     out.println("My options are: " + options);
+  
+// Start at root
+printFolder(options.getRoot(), "");
+}
+
+private void printFolder(File file, String spaces) {
+
+  // Print name
+  String name = file.getName();
+  if (file.isDirectory()) {
+    name += "/";
+  }
+  out.println(spaces + name);
+
+  // Get children
+  File[] children = file.listFiles();
+  if (children == null) {
+    return;
+  }
+
+  // Visit next level
+  for (File child : children) {
+    printFolder(child, spaces + "   ");
+  }
+
   }
 }
