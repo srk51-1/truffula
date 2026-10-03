@@ -149,6 +149,23 @@ public class TruffulaPrinterTest {
         // Assert that the output matches the expected output exactly
         assertEquals(expected.toString(), output);
     }
-    
 
+    @Test
+    void testEmptyFolder(@TempDir File tempDir) {
+        File folder = new File(tempDir, "books");
+        assertTrue(folder.mkdir());
+    
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        TruffulaOptions options = new TruffulaOptions(folder, false, false);
+        TruffulaPrinter printer =
+                new TruffulaPrinter(options, new PrintStream(output));
+    
+        printer.printTree();
+    
+        String expected = ConsoleColor.WHITE + "books/"
+                + System.lineSeparator() + ConsoleColor.RESET;
+    
+        assertEquals(expected, output.toString());
+    }
 }
+
