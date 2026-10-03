@@ -113,8 +113,8 @@ public class TruffulaPrinter {
     // DO NOT USE SYSTEM.OUT.PRINTLN
     // USE out.println instead (will use your ColorPrinter)
     
-    out.println("printTree was called!");
-    out.println("My options are: " + options);
+    //out.println("printTree was called!");
+    //out.println("My options are: " + options);
   
 // Start at root
 printFolder(options.getRoot(), "");
@@ -129,7 +129,6 @@ private void printFolder(File file, String spaces) {
   }
   out.println(spaces + name);
 
-  // Get children
   File[] children = file.listFiles();
   if (children == null) {
     return;
