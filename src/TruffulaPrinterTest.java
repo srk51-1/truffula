@@ -301,4 +301,16 @@ void testColorsDisabled(@TempDir File tempDir) throws IOException {
             + ConsoleColor.WHITE + "      notes.txt" + nl + ConsoleColor.RESET;
             assertEquals(expected, output.toString());
 }
+
+@Test
+void testAlphabeticalOrder(@TempDir File tempDir) throws IOException {
+    assertTrue(new File(tempDir, "zebra.txt").createNewFile());
+    assertTrue(new File(tempDir, "Apple.txt").createNewFile());
+    assertTrue(new File(tempDir, "banana.txt").createNewFile());
+
+    String result = printHiddenTestTree(tempDir, false);
+
+    assertTrue(result.indexOf("Apple.txt") < result.indexOf("banana.txt"));
+    assertTrue(result.indexOf("banana.txt") < result.indexOf("zebra.txt"));
+}
 }
