@@ -152,7 +152,6 @@ public class TruffulaPrinterTest {
 
         assertEquals(expected.toString(), output);
     }
-
     @Test
     void testEmptyFolder(@TempDir File tempDir) {
         File folder = new File(tempDir, "books");
@@ -265,4 +264,41 @@ public class TruffulaPrinterTest {
 
         assertEquals(expected, result);
     }
+
+    @Test
+    void testColorsByDepth(@TempDir File tempDir) throws IOException {
+        // Create nested folders and a file.
+        File folder = new File(tempDir, "one/two");
+        assertTrue(folder.mkdirs());
+        assertTrue(new File(folder, "file.txt").createNewFile());
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        TruffulaOptions options = new TruffulaOptions(tempDir, false, true);
+        new TruffulaPrinter(options, new PrintStream(output)).printTree();
+
+        String result = output.toString();
+
+        assertTrue(result.contains(ConsoleColor.WHITE + tempDir.getName() + "/"));
+        assertTrue(result.contains(ConsoleColor.PURPLE + "   one/"));
+        assertTrue(result.contains(ConsoleColor.YELLOW + "      two/"));
+        assertTrue(result.contains(ConsoleColor.WHITE + "         file.txt"));
+    }
+
+    @Test
+void testColorsDisabled(@TempDir File tempDir) throws IOException {
+    File folder = new File(tempDir, "books");
+    assertTrue(folder.mkdir());
+    assertTrue(new File(folder, "notes.txt").createNewFile());
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    TruffulaOptions options = new TruffulaOptions(tempDir, false, false);
+    new TruffulaPrinter(options, new PrintStream(output)).printTree();
+
+    String nl = System.lineSeparator();
+    String expected =
+            ConsoleColor.WHITE + tempDir.getName() + "/" + nl + ConsoleColor.RESET
+            + ConsoleColor.WHITE + "   books/" + nl + ConsoleColor.RESET
+            + ConsoleColor.WHITE + "      notes.txt" + nl + ConsoleColor.RESET;
+            assertEquals(expected, output.toString());
+}
 }
