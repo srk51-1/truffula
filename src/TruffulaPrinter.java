@@ -122,11 +122,17 @@ public class TruffulaPrinter {
     // out.println("My options are: " + options);
 
     // Start at root
-    printFolder(options.getRoot(), "");
+    printFolder(options.getRoot(), "", 0);
   }
 
-  private void printFolder(File file, String spaces) {
-
+  private void printFolder(File file, String spaces, int depth) {
+    // Choose the color for this level
+    if (options.isUseColor()) {
+      int index = depth % colorSequence.size();
+      out.setCurrentColor(colorSequence.get(index));
+    } else {
+      out.setCurrentColor(ConsoleColor.WHITE);
+    }
     // Print name
     String name = file.getName();
     if (file.isDirectory()) {
@@ -148,7 +154,7 @@ public class TruffulaPrinter {
       if (!options.isShowHidden() && child.isHidden()) {
         continue;
       }
-      printFolder(child, spaces + "   ");
+      printFolder(child, spaces + "   ", depth + 1);
     }
 
   }
