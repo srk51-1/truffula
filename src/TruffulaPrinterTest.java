@@ -38,22 +38,26 @@ public class TruffulaPrinterTest {
      * On Unix-like systems, files prefixed with a dot (.) are treated as hidden.
      * On Windows, this method also sets the DOS "hidden" file attribute.
      * 
-     * You do not need to modify this method, but you SHOULD use it when creating hidden files
-     * for your tests. This will make sure that your tests work on both Windows and UNIX-like systems.
+     * You do not need to modify this method, but you SHOULD use it when creating
+     * hidden files
+     * for your tests. This will make sure that your tests work on both Windows and
+     * UNIX-like systems.
      *
      * @param parentFolder the directory in which to create the hidden file
-     * @param filename the name of the hidden file; must start with a dot (.)
+     * @param filename     the name of the hidden file; must start with a dot (.)
      * @return a File object representing the created hidden file
-     * @throws IOException if an I/O error occurs during file creation or attribute setting
-     * @throws IllegalArgumentException if the filename does not start with a dot (.)
+     * @throws IOException              if an I/O error occurs during file creation
+     *                                  or attribute setting
+     * @throws IllegalArgumentException if the filename does not start with a dot
+     *                                  (.)
      */
     private static File createHiddenFile(File parentFolder, String filename) throws IOException {
-        if(!filename.startsWith(".")) {
+        if (!filename.startsWith(".")) {
             throw new IllegalArgumentException("Hidden files/folders must start with a '.'");
         }
         File hidden = new File(parentFolder, filename);
         hidden.createNewFile();
-        if(isWindows()) {
+        if (isWindows()) {
             Path path = Paths.get(hidden.toURI());
             Files.setAttribute(path, "dos:hidden", Boolean.TRUE, LinkOption.NOFOLLOW_LINKS);
         }
@@ -64,17 +68,17 @@ public class TruffulaPrinterTest {
     public void testPrintTree_ExactOutput_WithCustomPrintStream(@TempDir File tempDir) throws IOException {
         // Build the example directory structure:
         // myFolder/
-        //    .hidden.txt
-        //    Apple.txt
-        //    banana.txt
-        //    Documents/
-        //       images/
-        //          Cat.png
-        //          cat.png
-        //          Dog.png
-        //       notes.txt
-        //       README.md
-        //    zebra.txt
+        // .hidden.txt
+        // Apple.txt
+        // banana.txt
+        // Documents/
+        // images/
+        // Cat.png
+        // cat.png
+        // Dog.png
+        // notes.txt
+        // README.md
+        // zebra.txt
 
         // Create "myFolder"
         File myFolder = new File(tempDir, "myFolder");
@@ -146,7 +150,6 @@ public class TruffulaPrinterTest {
         expected.append(yellow).append("      README.md").append(nl).append(reset);
         expected.append(purple).append("   zebra.txt").append(nl).append(reset);
 
-        // Assert that the output matches the expected output exactly
         assertEquals(expected.toString(), output);
     }
 
@@ -154,18 +157,112 @@ public class TruffulaPrinterTest {
     void testEmptyFolder(@TempDir File tempDir) {
         File folder = new File(tempDir, "books");
         assertTrue(folder.mkdir());
-    
+
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         TruffulaOptions options = new TruffulaOptions(folder, false, false);
-        TruffulaPrinter printer =
-                new TruffulaPrinter(options, new PrintStream(output));
-    
+        TruffulaPrinter printer = new TruffulaPrinter(options, new PrintStream(output));
+
         printer.printTree();
-    
+
         String expected = ConsoleColor.WHITE + "books/"
                 + System.lineSeparator() + ConsoleColor.RESET;
-    
+
         assertEquals(expected, output.toString());
     }
-}
 
+    private String printHiddenTestTree(File folder, boolean showHidden) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        TruffulaOptions options = new TruffulaOptions(folder, showHidden, false);
+
+        TruffulaPrinter printer = new TruffulaPrinter(options, new PrintStream(output));
+
+        printer.printTree();
+        return output.toString();
+    }
+
+    @Test
+    void testHiddenFilesExcluded(@TempDir File tempDir) throws IOException {
+        createHiddenFile(tempDir, ".secret.txt");
+        assertTrue(new File(tempDir, "visible.txt").createNewFile());
+
+        String result = printHiddenTestTree(tempDir, false);
+
+        assertTrue(result.contains("visible.txt"));
+        assertTrue(!result.contains(".secret.txt"));
+    }
+
+    @Test
+    void testHiddenFilesIncluded(@TempDir File tempDir) throws IOException {
+        createHiddenFile(tempDir, ".secret.txt");
+        assertTrue(new File(tempDir, "visible.txt").createNewFile());
+
+        String result = printHiddenTestTree(tempDir, true);
+
+        assertTrue(result.contains(".secret.txt"));
+        assertTrue(result.contains("visible.txt"));
+    }
+
+    @Test
+    void testNestedHiddenFiles(@TempDir File tempDir) throws IOException {
+        File folder = new File(tempDir, "documents");
+        assertTrue(folder.mkdir());
+
+        createHiddenFile(folder, ".secret.txt");
+        assertTrue(new File(folder, "notes.txt").createNewFile());
+
+        String excluded = printHiddenTestTree(tempDir, false);
+
+        assertTrue(excluded.contains("documents/"));
+        assertTrue(excluded.contains("notes.txt"));
+        assertTrue(!excluded.contains(".secret.txt"));
+
+        String included = printHiddenTestTree(tempDir, true);
+
+        assertTrue(included.contains(".secret.txt"));
+        assertTrue(included.contains("notes.txt"));
+    }
+
+    @Test
+    void testHiddenFolderAndContents(@TempDir File tempDir) throws Exception {
+        File folder = createHiddenFile(tempDir, ".private");
+        assertTrue(folder.delete());
+        assertTrue(folder.mkdir());
+
+        if (isWindows()) {
+            Process process = new ProcessBuilder(
+                    "attrib", "+H", folder.getAbsolutePath()).start();
+            assertEquals(0, process.waitFor());
+        }
+
+        assertTrue(folder.isHidden());
+        assertTrue(new File(folder, "inside.txt").createNewFile());
+        assertTrue(new File(tempDir, "outside.txt").createNewFile());
+
+        String excluded = printHiddenTestTree(tempDir, false);
+
+        assertTrue(!excluded.contains(".private/"));
+        assertTrue(!excluded.contains("inside.txt"));
+        assertTrue(excluded.contains("outside.txt"));
+
+        String included = printHiddenTestTree(tempDir, true);
+
+        assertTrue(included.contains(".private/"));
+        assertTrue(included.contains("inside.txt"));
+        assertTrue(included.contains("outside.txt"));
+    }
+
+    @Test
+    void testOnlyHiddenFiles(@TempDir File tempDir) throws IOException {
+        createHiddenFile(tempDir, ".first.txt");
+        createHiddenFile(tempDir, ".second.txt");
+
+        String result = printHiddenTestTree(tempDir, false);
+
+        String expected = ConsoleColor.WHITE
+                + tempDir.getName() + "/"
+                + System.lineSeparator()
+                + ConsoleColor.RESET;
+
+        assertEquals(expected, result);
+    }
+}
